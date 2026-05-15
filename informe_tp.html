@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Informe TP — Cálculo Mental</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Georgia:ital,wght@0,400;0,700;1,400&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 12pt;
+      line-height: 1.7;
+      color: #111;
+      background: #f0f0f0;
+    }
+
+    .page {
+      width: 21cm;
+      min-height: 29.7cm;
+      margin: 1.5cm auto;
+      background: white;
+      padding: 3cm 3cm 3cm 3cm;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    }
+
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    @media print {
+      body { background: white; }
+      .page {
+        margin: 0;
+        padding: 2.5cm 3cm 2.5cm 3cm;
+        box-shadow: none;
+        page-break-after: always;
+        width: 100%;
+      }
+    }
+
+    /* Encabezado */
+    .header {
+      text-align: center;
+      border-bottom: 2px solid #222;
+      padding-bottom: 0.8cm;
+      margin-bottom: 0.8cm;
+    }
+    .header .universidad { font-size: 10pt; text-transform: uppercase; letter-spacing: 1px; color: #444; }
+    .header .materia { font-size: 11pt; margin: 4px 0; color: #333; }
+    .header h1 { font-size: 18pt; font-weight: bold; margin: 10px 0 4px; }
+    .header .subtitulo { font-size: 11pt; color: #555; font-style: italic; }
+    .header .meta { font-size: 10pt; color: #666; margin-top: 8px; }
+
+    /* Secciones */
+    h2 {
+      font-size: 13pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #bbb;
+      padding-bottom: 3px;
+      margin: 1cm 0 0.3cm;
+    }
+    h3 {
+      font-size: 11.5pt;
+      font-weight: bold;
+      margin: 0.5cm 0 0.2cm;
+    }
+
+    p { margin-bottom: 0.3cm; text-align: justify; }
+
+    ul, ol {
+      margin: 0.2cm 0 0.3cm 0.8cm;
+    }
+    li { margin-bottom: 0.15cm; }
+
+    /* Tabla */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.4cm 0 0.5cm;
+      font-size: 11pt;
+    }
+    th {
+      background: #222;
+      color: white;
+      padding: 6px 10px;
+      text-align: left;
+      font-weight: bold;
+    }
+    td { padding: 5px 10px; border-bottom: 1px solid #ddd; vertical-align: top; }
+    tr:nth-child(even) td { background: #f8f8f8; }
+
+    /* Código inline */
+    code {
+      font-family: 'Courier New', monospace;
+      font-size: 10.5pt;
+      background: #f4f4f4;
+      padding: 0px 3px;
+      border-radius: 2px;
+    }
+
+    /* Nota al pie */
+    .footer {
+      margin-top: 1.5cm;
+      border-top: 1px solid #bbb;
+      padding-top: 0.4cm;
+      font-size: 9.5pt;
+      color: #666;
+      text-align: center;
+    }
+
+    .tag-ok   { color: #1a7a1a; font-weight: bold; }
+    .tag-no   { color: #a00; font-weight: bold; }
+    .tag-warn { color: #b85c00; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ENCABEZADO -->
+  <div class="header">
+    <div class="universidad">Universidad Argentina de la Empresa — UADE</div>
+    <div class="materia">Desarrollo de Aplicaciones I — 1.° cuatrimestre 2026</div>
+    <h1>Trabajo Práctico: Cálculo Mental</h1>
+    <div class="subtitulo">Aplicación móvil de entrenamiento matemático — React Native + Expo</div>
+    <div class="meta">Facundo Conde Zabulanes &nbsp;|&nbsp; 11 de Mayo 2026</div>
+  </div>
+
+
+  <!-- 1. INTRODUCCIÓN -->
+  <h2>1. Descripción general</h2>
+
+  <p>
+    Para este trabajo práctico desarrollé una aplicación móvil de entrenamiento de cálculo mental
+    usando <strong>React Native con Expo</strong> en modo managed workflow y <strong>TypeScript</strong>.
+    La app funciona completamente sin conexión a internet: toda la persistencia es local mediante
+    <strong>AsyncStorage</strong>, y el estado global se maneja con <strong>Context API y useReducer</strong>,
+    sin librerías externas de estado.
+  </p>
+  <p>
+    El objetivo es que el usuario pueda practicar operaciones matemáticas básicas eligiendo la
+    dificultad, el modo de juego y la cantidad de rondas, y luego ver su historial de partidas
+    y estadísticas acumuladas.
+  </p>
+
+
+  <!-- 2. FUNCIONALIDADES OBLIGATORIAS -->
+  <h2>2. Funcionalidades obligatorias</h2>
+
+  <h3>2.1 Configuración de partida</h3>
+  <p>
+    Antes de cada partida el jugador puede elegir la <strong>dificultad</strong> (Fácil, Medio o Difícil),
+    el <strong>modo de juego</strong> (Clásico, Verdadero/Falso, Múltiple Choice o Contra Reloj) y la
+    cantidad de operaciones por ronda. En el modo Contra Reloj, en lugar de la cantidad de operaciones
+    se elige la duración total (30, 60 o 120 segundos).
+    Todos los parámetros de cada dificultad —operadores habilitados, rango de los números y tiempo
+    máximo por operación— están centralizados en un único archivo (<code>constants/difficulty.ts</code>),
+    de modo que modificarlos no requiere tocar ninguna pantalla.
+  </p>
+
+  <table>
+    <tr><th>Dificultad</th><th>Operaciones</th><th>Rango</th><th>Tiempo máx/op</th></tr>
+    <tr><td>Fácil</td><td>Suma y resta</td><td>1 – 20</td><td>10 s</td></tr>
+    <tr><td>Medio</td><td>Suma, resta, multiplicación</td><td>1 – 50 (× hasta 12)</td><td>8 s</td></tr>
+    <tr><td>Difícil</td><td>Suma, resta, multiplicación, división</td><td>1 – 100 (÷ exacta)</td><td>6 s</td></tr>
+  </table>
+
+  <h3>2.2 Generador de operaciones</h3>
+  <p>
+    La función <code>generateOperation()</code> en <code>utils/operations.ts</code> genera una
+    operación aleatoria acorde a la dificultad y el modo elegidos. Para evitar resultados incómodos
+    tomé dos decisiones que me parecieron importantes:
+  </p>
+  <ul>
+    <li>
+      <strong>División sin decimales:</strong> en lugar de generar el dividendo y el divisor al azar
+      y rezar para que el resultado sea entero, genero el resultado primero y después lo multiplico
+      por el divisor para obtener el dividendo. Así la división siempre es exacta.
+    </li>
+    <li>
+      <strong>Resta sin negativos (fácil y medio):</strong> el sustraendo siempre se elige en el
+      rango <code>[1, a]</code>, donde <code>a</code> es el primer operando, para garantizar que
+      el resultado nunca sea negativo en niveles de entrada.
+    </li>
+    <li>
+      <strong>Distractores en Múltiple Choice:</strong> las tres opciones incorrectas se generan
+      sumando o restando un valor aleatorio de 1 a 10 al resultado correcto. Se valida que sean
+      únicas y no negativas.
+    </li>
+  </ul>
+
+  <h3>2.3 Modos de juego</h3>
+  <p>
+    Implementé los cuatro modos requeridos. Cada uno tiene su propia lógica de presentación en
+    <code>GameScreen</code>, pero todos comparten el mismo hook <code>useGameLogic</code>
+    que maneja el flujo interno:
+  </p>
+  <ul>
+    <li>
+      <strong>Clásico:</strong> se muestra la operación con un signo de pregunta en lugar del
+      resultado. El jugador escribe la respuesta con el teclado custom (sin teclado nativo del
+      sistema operativo) y la confirma con un botón.
+    </li>
+    <li>
+      <strong>Verdadero/Falso:</strong> se muestra la operación con un resultado que puede ser
+      correcto o incorrecto (probabilidad 50/50). El jugador presiona uno de los dos botones grandes.
+    </li>
+    <li>
+      <strong>Múltiple Choice:</strong> cuatro opciones en grilla 2×2, una sola correcta, orden aleatorio.
+    </li>
+    <li>
+      <strong>Contra Reloj:</strong> en lugar de un número fijo de operaciones, hay un timer global
+      que cuenta hacia atrás. Las operaciones aparecen automáticamente al responder la anterior.
+      Opcionalmente se puede activar "terminar al primer error".
+    </li>
+  </ul>
+
+  <h3>2.4 Timer por operación</h3>
+  <p>
+    Cada operación tiene su propio temporizador, implementado en el hook <code>useTimer</code>.
+    Se muestra como una barra horizontal que se vacía de izquierda a derecha y cambia de color:
+    verde cuando queda más del 50% del tiempo, amarillo entre el 25% y el 50%, y rojo por debajo
+    del 25%. Si el tiempo se agota sin que el usuario responda, la operación se registra como
+    "sin respuesta" y se resta 50 puntos.
+  </p>
+
+  <h3>2.5 Sistema de puntaje</h3>
+  <p>El puntaje se calcula según la fórmula indicada en la consigna:</p>
+  <table>
+    <tr><th>Resultado</th><th>Puntos</th></tr>
+    <tr><td>Correcta rápida (respondida antes del 75 % del tiempo máximo)</td><td class="tag-ok">+100</td></tr>
+    <tr><td>Correcta en tiempo (entre el 75 % y el 100 %)</td><td class="tag-ok">+70</td></tr>
+    <tr><td>Incorrecta</td><td class="tag-no">−30</td></tr>
+    <tr><td>Sin respuesta (timeout)</td><td class="tag-no">−50</td></tr>
+  </table>
+  <p>El puntaje final puede ser negativo. Siempre se muestra como número entero.</p>
+
+  <h3>2.6 Persistencia y registro de partidas</h3>
+  <p>
+    Usé <strong>AsyncStorage</strong> para guardar tres tipos de datos:
+  </p>
+  <ul>
+    <li><strong>Historial</strong> (<code>@history</code>): las últimas 50 partidas en orden cronológico inverso. Si se superan 50, las más viejas se descartan automáticamente (FIFO).</li>
+    <li><strong>Récords</strong> (<code>@bestScores</code>): el mejor puntaje para cada combinación de modo + dificultad.</li>
+    <li><strong>Preferencias</strong> (<code>@settings</code>): tema visual, último modo y dificultad usados, y si los sonidos están activados.</li>
+  </ul>
+  <p>
+    Cada partida guardada incluye: fecha, modo, dificultad, cantidad de operaciones, puntaje,
+    cantidad de correctas/incorrectas/timeouts, tiempo promedio de respuesta y precisión porcentual.
+  </p>
+
+  <h3>2.7 Pantallas adicionales</h3>
+  <ul>
+    <li>
+      <strong>Resultados:</strong> muestra el puntaje total con una animación de contador,
+      estadísticas de la ronda y un badge animado si se batió un récord. Desde ahí se puede
+      volver a jugar con la misma configuración o cambiarla.
+    </li>
+    <li>
+      <strong>Historial:</strong> lista de todas las partidas anteriores, con filtros por modo y
+      dificultad. Se puede borrar el historial completo con un modal de confirmación.
+    </li>
+    <li>
+      <strong>Estadísticas:</strong> resumen agregado por modo (total de partidas, mejor puntaje,
+      precisión media) y tabla de récords por combinación modo+dificultad.
+    </li>
+    <li>
+      <strong>Home:</strong> pantalla principal con los botones de navegación y el toggle de tema oscuro/claro.
+    </li>
+  </ul>
+
+
+  <!-- 3. FUNCIONALIDADES OPCIONALES -->
+  <h2>3. Funcionalidades opcionales</h2>
+
+  <h3>Implementadas <span class="tag-ok">✓</span></h3>
+  <ul>
+    <li>
+      <strong>Animaciones:</strong> cada operación nueva aparece con un fade-in suave. El puntaje
+      en la pantalla de resultados se anima contando desde cero hasta el total. El badge de
+      "NUEVO RECORD" aparece con un efecto spring.
+    </li>
+    <li>
+      <strong>Feedback visual inmediato:</strong> al responder, el borde de la pantalla se ilumina
+      en verde (correcto) o rojo (incorrecto) durante 300 ms.
+    </li>
+    <li>
+      <strong>Sonidos (expo-av):</strong> se implementó un sistema de sonidos con tres eventos
+      funcionales: una melodía introductoria al abrir la app por primera vez, un sonido de
+      derrota cuando el puntaje final es negativo, y un click en cada tecla del teclado y en los
+      botones de navegación principales. Los sonidos de correcta/incorrecta/timeout están
+      preparados en la arquitectura pero sin archivos de audio asignados aún.
+    </li>
+  </ul>
+
+  <h3>No implementadas <span class="tag-no">✗</span></h3>
+  <ul>
+    <li>
+      <strong>Gráficos en estadísticas</strong> (<code>react-native-chart-kit</code>): decidí no
+      incluirlo porque las estadísticas textuales ya cubren lo pedido y agregar otra librería
+      nativa habría sumado complejidad de configuración sin un beneficio claro para el TP.
+    </li>
+    <li>
+      <strong>Dificultad dinámica</strong> (reducir el tiempo máximo un 5% cada 3 correctas
+      seguidas): lo descarté por falta de tiempo y porque modifica la percepción de dificultad
+      de una manera que puede confundir al usuario si no se comunica claramente en la UI.
+    </li>
+  </ul>
+
+
+  <!-- 4. DECISIONES DE DISEÑO -->
+  <h2>4. Decisiones de diseño</h2>
+
+  <h3>4.1 Separación de dos contextos globales</h3>
+  <p>
+    Decidí dividir el estado global en dos contextos separados: <code>SettingsContext</code>
+    para las preferencias del usuario (tema, último modo, sonido) y <code>GameContext</code>
+    para el historial y los récords. La razón es que tienen ciclos de vida muy distintos: las
+    preferencias se guardan automáticamente cada vez que cambian y se leen al abrir la app,
+    mientras que el historial se carga una sola vez al inicio. Tenerlos juntos hubiera causado
+    re-renders innecesarios en toda la app cada vez que el usuario, por ejemplo, cambia el tema.
+  </p>
+
+  <h3>4.2 La lógica del juego separada de la pantalla</h3>
+  <p>
+    Toda la lógica de una ronda —el timer, la generación de operaciones, la acumulación de
+    resultados, la detección del fin de partida— está encapsulada en el hook <code>useGameLogic</code>.
+    La pantalla <code>GameScreen</code> solo se encarga de mostrar lo que el hook expone y de
+    llamar a las funciones cuando el usuario interactúa. Esto me hizo mucho más fácil detectar
+    errores, porque podía seguir la lógica del juego sin tener que mirar la UI.
+  </p>
+
+  <h3>4.3 Teclado propio en lugar del del sistema</h3>
+  <p>
+    En el modo Clásico usé un teclado numérico construido desde cero en lugar del teclado del
+    sistema operativo. Lo hice por tres razones: el teclado nativo en Android aparece y desaparece
+    cambiando el layout de toda la pantalla (lo que requiere <code>KeyboardAvoidingView</code> y
+    suele comportarse distinto en cada dispositivo); quería incluir el botón de signo negativo
+    integrado; y me daba más control sobre el diseño visual para que quede consistente con el
+    resto de la app.
+  </p>
+
+  <h3>4.4 Singleton para los sonidos</h3>
+  <p>
+    En lugar de cargar y descargar los archivos de audio en cada componente que los necesita,
+    creé un <em>singleton</em> (<code>soundManager</code>) que los carga una única vez cuando
+    arranca la app y los deja listos en memoria. Esto evita que haya un delay audible la primera
+    vez que suena un efecto. Cualquier parte de la app puede llamar a
+    <code>soundManager.play('click')</code> sin necesitar saber nada de cómo están cargados
+    los archivos.
+  </p>
+
+
+  <!-- 5. PROBLEMAS ENCONTRADOS -->
+  <h2>5. Problemas encontrados durante el desarrollo</h2>
+
+  <h3>5.1 Incompatibilidad de versiones de React Native Reanimated</h3>
+  <p>
+    Al instalar las dependencias con <code>npm install</code> directamente, las versiones
+    resueltas eran incompatibles entre sí: <code>react-native-screens</code> en su versión
+    más reciente requería React Native 0.82+, pero Expo SDK 54 viene con 0.81.5. La app
+    no arrancaba y tiraba un error de peer dependencies.
+  </p>
+  <p>
+    Además, agregué <code>react-native-reanimated</code> como plugin en <code>app.json</code>,
+    que era la forma correcta en la versión 3 de esa librería, pero en la versión 4 (que es la
+    que instala Expo SDK 54) ya no tiene ese archivo de plugin. La solución fue desinstalar todo
+    y reinstalar usando <code>npx expo install</code> en lugar de <code>npm install</code>,
+    ya que ese comando resuelve automáticamente las versiones compatibles con el SDK que se
+    está usando, y quitar la entrada del plugin de <code>app.json</code>.
+  </p>
+
+  <h3>5.2 Los chips de configuración no respondían</h3>
+  <p>
+    En la pantalla de configuración, los botones para elegir la cantidad de operaciones y la
+    duración del modo Contra Reloj no mostraban cuál opción estaba seleccionada, y al tocarlos
+    tampoco cambiaban visualmente.
+  </p>
+  <p>
+    El problema era un error de tipo que TypeScript no detectó: las opciones eran arrays de
+    números (<code>[5, 10, 15, 20]</code>), y para pasarlos a la función genérica de chips
+    los había casteado con <code>as unknown as string[]</code>. Ese casteo solo existe en tiempo
+    de compilación; en runtime los valores seguían siendo números. Entonces la comparación
+    <code>"10" === 10</code> era siempre <code>false</code>, ningún chip aparecía seleccionado
+    y el estado nunca se actualizaba correctamente. La solución fue usar <code>.map(String)</code>
+    para convertir los valores realmente a strings antes de pasarlos.
+  </p>
+
+  <h3>5.3 El sonido de intro se repetía al volver a la pantalla principal</h3>
+  <p>
+    Al navegar de vuelta a Home (por ejemplo, después de ver el historial), el sonido de
+    introducción volvía a reproducirse porque el componente se montaba de nuevo en cada
+    visita. Para solucionarlo usé una variable de módulo (<code>let introPlayed = false</code>)
+    que se marca como <code>true</code> la primera vez que el sonido suena y evita que
+    vuelva a reproducirse mientras la app esté abierta.
+  </p>
+
+  <div class="footer">
+    Desarrollo de Aplicaciones I — UADE &nbsp;|&nbsp; Trabajo Práctico Individual &nbsp;|&nbsp; 2026
+  </div>
+
+</div>
+</body>
+</html>

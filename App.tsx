@@ -1,20 +1,19 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { SettingsProvider } from './src/contexts/SettingsContext';
+import { GameProvider } from './src/contexts/GameContext';
+import AppNavigator from './src/navigation/AppNavigator';
+import { soundManager } from './src/utils/soundManager';
 
 export default function App() {
+  useEffect(() => {
+    soundManager.init();
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SettingsProvider>
+      <GameProvider>
+        <AppNavigator />
+      </GameProvider>
+    </SettingsProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
